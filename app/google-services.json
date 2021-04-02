@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "331038936510",
+    "project_id": "tedgram-6e645",
+    "storage_bucket": "tedgram-6e645.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:331038936510:android:89e3d8dc71669d8d017def",
+        "android_client_info": {
+          "package_name": "com.example.tedgram"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "331038936510-hapuisb6amo92iq2770ckrf4vj2bnefg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQOvJAr8AZsvThFiTjir0WEHKaop7CL-Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "331038936510-hapuisb6amo92iq2770ckrf4vj2bnefg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
