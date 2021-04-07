@@ -1,5 +1,6 @@
 package com.example.tedgram.presentation.ui.profile
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -55,6 +56,11 @@ class ProfileFragment : Fragment() {
 
         binding.viewPager.adapter = viewPagerAdapter
         binding.tabLayout.setupWithViewPager(binding.viewPager)
+
+        binding.btnProfile.setOnClickListener {
+            val intent = Intent(context, EditProfileActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     companion object {

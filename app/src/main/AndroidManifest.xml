@@ -9,12 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TedGramNoActionBar">
+        <activity android:name=".presentation.ui.profile.EditProfileActivity"></activity>
         <activity
             android:name=".presentation.ui.ScrollingActivity"
             android:label="@string/title_activity_scrolling"
-            android:theme="@style/Theme.TedGramNoActionBar.NoActionBar">
-
-        </activity>
+            android:theme="@style/Theme.TedGramNoActionBar.NoActionBar"></activity>
         <activity android:name=".presentation.ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
