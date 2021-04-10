@@ -9,16 +9,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TedGramNoActionBar">
-        <activity android:name=".presentation.ui.register.RegisterActivity"></activity>
-        <activity android:name=".presentation.ui.login.LoginActivity" />
-        <activity android:name=".presentation.ui.profile.EditProfileActivity" />
+        <activity android:name=".presentation.ui.register.RegisterActivity">
 
-        <activity android:name=".presentation.ui.MainActivity">
+        </activity>
+        <activity android:name=".presentation.ui.login.LoginActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".presentation.ui.profile.EditProfileActivity" />
+
+        <activity android:name=".presentation.ui.MainActivity">
+
         </activity>
     </application>
 
