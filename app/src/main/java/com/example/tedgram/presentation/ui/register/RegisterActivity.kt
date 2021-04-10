@@ -1,14 +1,15 @@
 package com.example.tedgram.presentation.ui.register
 
-import android.R.attr.password
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
+import com.example.tedgram.core.data.local.model.User
 import com.example.tedgram.databinding.ActivityRegisterBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class RegisterActivity : AppCompatActivity() {
@@ -19,6 +20,8 @@ class RegisterActivity : AppCompatActivity() {
 
     private var mAuth: FirebaseAuth ?= null
 
+    private var db: FirebaseFirestore ?= null
+
     private var _binding: ActivityRegisterBinding ?= null
     private val binding get() = _binding
 
@@ -28,6 +31,7 @@ class RegisterActivity : AppCompatActivity() {
         setContentView(binding?.root)
 
         mAuth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
 
         binding?.btnRegister?.setOnClickListener {
             registerUser()
@@ -49,11 +53,12 @@ class RegisterActivity : AppCompatActivity() {
             binding?.etUsername?.error = "Please fill this username"
         } else {
             binding?.progressBar?.visibility = View.VISIBLE
-           createNewUser(email,password)
+           createNewUser(email,password, username)
+
         }
     }
 
-    private fun createNewUser(email: String, password: String) {
+    private fun createNewUser(email: String, password: String, username: String) {
         mAuth!!.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(
                 this
@@ -62,11 +67,14 @@ class RegisterActivity : AppCompatActivity() {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "createUserWithEmail:success")
                     val user = mAuth!!.currentUser
+                    val userModel = User(user.uid,"" , username, email, password, "","")
+                    addToFirestore(userModel)
                     Toast.makeText(
                         this, "Success Create User",
                         Toast.LENGTH_SHORT
                     ).show()
                     binding?.progressBar?.visibility = View.INVISIBLE
+//                    mAuth?.signOut()
                     finish()
                 } else {
                     // If sign in fails, display a message to the user.
@@ -84,6 +92,22 @@ class RegisterActivity : AppCompatActivity() {
 
 
             }
+    }
+
+    private fun addToFirestore(user: User) {
+        val userMap: MutableMap<String, Any> = HashMap()
+        userMap["user"] = user
+
+// Add a new document with a generated ID
+//        db!!.collection("users")
+//            .add(user)
+//            .addOnSuccessListener { user.userId
+//            }
+//            .addOnFailureListener { e -> Log.w(TAG, "Error adding document", e) }
+
+        db!!.collection("users").document(user.userId).set(
+            user
+        )
     }
 
     override fun onDestroy() {

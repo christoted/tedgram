@@ -9,6 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TedGramNoActionBar">
+        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"/>
         <activity android:name=".presentation.ui.register.RegisterActivity">
 
         </activity>
