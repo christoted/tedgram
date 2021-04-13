@@ -4,9 +4,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.example.tedgram.R
-import com.example.tedgram.presentation.ui.profile.below.PostFragment
-import com.example.tedgram.presentation.ui.profile.below.SavedFragment
-import java.util.ArrayList
+import com.example.tedgram.presentation.ui.profile.below.post.PostFragment
+import com.example.tedgram.presentation.ui.profile.below.saved.SavedFragment
 
 class ViewPagerAdapter(private val context: ProfileFragment, fragmentManager: FragmentManager): FragmentPagerAdapter(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
@@ -18,11 +17,11 @@ class ViewPagerAdapter(private val context: ProfileFragment, fragmentManager: Fr
     override fun getItem(position: Int): Fragment {
         return when (position) {
             0 -> {
-                 PostFragment()
+                PostFragment()
             }
 
             1 -> {
-                 SavedFragment()
+                SavedFragment()
             }
 
             else -> Fragment()

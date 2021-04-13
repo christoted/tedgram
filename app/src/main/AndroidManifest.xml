@@ -9,7 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TedGramNoActionBar">
-        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"/>
+        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Theme.TedGramActionBar">
+
+        </activity>
         <activity android:name=".presentation.ui.register.RegisterActivity">
 
         </activity>
@@ -20,7 +23,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".presentation.ui.profile.EditProfileActivity" />
+        <activity android:name=".presentation.ui.profile.edit.EditProfileActivity" />
 
         <activity android:name=".presentation.ui.MainActivity">
 
