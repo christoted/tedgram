@@ -8,11 +8,13 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
+import com.bumptech.glide.Glide
 import com.example.tedgram.R
 import com.example.tedgram.databinding.ActivityEditProfileBinding
 import com.example.tedgram.presentation.ui.login.LoginActivity
@@ -72,6 +74,8 @@ class EditProfileActivity : AppCompatActivity() {
 
         storage = FirebaseStorage.getInstance()
 
+        binding?.progressBar?.visibility = View.VISIBLE
+
         retrieveUserProfile()
 
         binding?.toolbar?.setNavigationOnClickListener {
@@ -102,13 +106,13 @@ class EditProfileActivity : AppCompatActivity() {
             Log.d(TAG, "IMAGE URI $imageUri")
             when (it.itemId) {
                 R.id.done -> {
-                    Log.d(TAG, "onCreate: $bio$username$fullName")
+                    Log.d(TAG, "onCreate: bio $bio username $username fullname $fullName")
                     updateUserProfile(bio, username, fullName, imageUri)
 
                     Snackbar.make(binding!!.root, "Update Success", Snackbar.LENGTH_SHORT).show()
                     Handler(Looper.getMainLooper()).postDelayed({
                         finish()
-                    }, 2000)
+                    }, 3000)
 
                 }
             }
@@ -169,16 +173,29 @@ class EditProfileActivity : AppCompatActivity() {
                     val username: String = result?.get("username").toString()
 
                     binding?.etFullName?.setText(fullName)
+                    binding?.etUsername?.setText(username)
+                    binding?.etBio?.setText(bio)
+
+                    binding?.imageView?.let { imageHolder ->
+                        Glide.with(this@EditProfileActivity)
+                            .load(imageUrl)
+                            .into(imageHolder)
+                    }
+
+                    binding?.progressBar?.visibility = View.GONE
+
                 } else {
                     Log.w(
                         TAG,
                         "Error getting documents.",
                         it.exception
                     )
+                    binding?.progressBar?.visibility = View.GONE
                 }
             }
             ?.addOnFailureListener {
                 Log.d(TAG, "retrieveUserProfile: ")
+                binding?.progressBar?.visibility = View.GONE
             }
 
             withContext(Dispatchers.Main) {
