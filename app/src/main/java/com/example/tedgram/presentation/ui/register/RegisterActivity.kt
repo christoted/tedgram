@@ -5,9 +5,10 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentActivity
-import com.example.tedgram.core.data.local.model.User
+import androidx.lifecycle.ViewModelProvider
+import com.example.tedgram.core.data.local.entity.User
 import com.example.tedgram.databinding.ActivityRegisterBinding
+import com.example.tedgram.viewmodel.ViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -25,10 +26,16 @@ class RegisterActivity : AppCompatActivity() {
     private var _binding: ActivityRegisterBinding ?= null
     private val binding get() = _binding
 
+    private lateinit var registerViewModel: RegisterViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding?.root)
+
+        val viewModelFactory = ViewModelFactory.getInstance(this)
+
+        registerViewModel = ViewModelProvider(this, viewModelFactory)[RegisterViewModel::class.java]
 
         mAuth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
@@ -59,39 +66,47 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun createNewUser(email: String, password: String, username: String) {
-        mAuth!!.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener(
-                this
-            ) { task ->
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "createUserWithEmail:success")
-                    val user = mAuth!!.currentUser
-                    val userModel = User(user.uid,"" , username, email, password, "","")
-                    addToFirestore(userModel)
-                    Toast.makeText(
-                        this, "Success Create User",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    binding?.progressBar?.visibility = View.INVISIBLE
-//                    mAuth?.signOut()
-                    finish()
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Log.w(
-                        TAG,
-                        "createUserWithEmail:failure",
-                        task.exception
-                    )
-                    Toast.makeText(
-                        this, "Authentication failed.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    binding?.progressBar?.visibility = View.INVISIBLE
-                }
-
-
-            }
+        binding?.let { registerViewModel.registerUser(email, password, username, it) }
+        finish()
+//            .addOnCompleteListener(
+//                this
+//            ) { task ->
+//                if (task.isSuccessful) {
+//                    // Sign in success, update UI with the signed-in user's information
+//                    Log.d(TAG, "createUserWithEmail:success")
+//                    val user = mAuth!!.currentUser
+//                    val userModel =
+//                        User(
+//                            user.uid,
+//                            "",
+//                            username,
+//                            email,
+//                            password,
+//                            "",
+//                            ""
+//                        )
+//                    addToFirestore(userModel)
+//                    Toast.makeText(
+//                        this, "Success Create User",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                    binding?.progressBar?.visibility = View.INVISIBLE
+////                    mAuth?.signOut()
+//                    finish()
+//                } else {
+//                    // If sign in fails, display a message to the user.
+//                    Log.w(
+//                        TAG,
+//                        "createUserWithEmail:failure",
+//                        task.exception
+//                    )
+//                    Toast.makeText(
+//                        this, "Authentication failed.",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                    binding?.progressBar?.visibility = View.INVISIBLE
+//                }
+ //           }
     }
 
     private fun addToFirestore(user: User) {

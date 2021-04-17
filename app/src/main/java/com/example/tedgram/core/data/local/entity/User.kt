@@ -1,4 +1,4 @@
-package com.example.tedgram.core.data.local.model
+package com.example.tedgram.core.data.local.entity
 
 import android.os.Parcel
 import android.os.Parcelable
