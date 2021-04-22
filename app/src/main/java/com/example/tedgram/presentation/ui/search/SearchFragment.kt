@@ -17,15 +17,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlin.math.log
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-class SearchFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+class SearchFragment : Fragment(), OnButtonFollowClicked {
 
     companion object {
         val TAG = SearchFragment::class.java.simpleName
@@ -33,6 +26,7 @@ class SearchFragment : Fragment() {
         val USERNAME = "username"
     }
 
+    private var isFollow = false
     private var mAuth: FirebaseAuth? = null
     private var db: FirebaseFirestore? = null
 
@@ -42,14 +36,6 @@ class SearchFragment : Fragment() {
     private lateinit var searchAdapter: SearchAdapter
 
     private lateinit var listUsers: ArrayList<User>
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -72,7 +58,7 @@ class SearchFragment : Fragment() {
         setHasOptionsMenu(true)
         (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
 
-        searchAdapter = SearchAdapter()
+        searchAdapter = SearchAdapter(this)
 
         listUsers = ArrayList()
         binding.progressBar.visibility = View.VISIBLE
@@ -82,6 +68,7 @@ class SearchFragment : Fragment() {
     }
 
     fun getAllUser(): List<User> {
+        //Nanti waktu getAllUser bisa di validasi dlu sii, dari collection following, if ternyata sama yauda dibuat is Follwoing nya sama dengan unfollow
         binding.progressBar.visibility = View.VISIBLE
         val listUser = ArrayList<User>()
         db?.collection(USERS)
@@ -97,8 +84,9 @@ class SearchFragment : Fragment() {
                         val imageUrl: String = result?.get("imageUrl").toString()
                         val password: String = result["password"].toString()
                         val username: String = result?.get("username").toString()
+                        val isFollowing: Boolean = result["isFollowing"] as Boolean
 
-                        var userResult = User(user.id, fullName, username, email, password, bio, imageUrl)
+                        var userResult = User(user.id, fullName, username, email, password, bio, imageUrl, isFollowing)
                         listUser.add(userResult)
 
                         searchAdapter.setData(listUser)
@@ -135,8 +123,9 @@ class SearchFragment : Fragment() {
                     val imageUrl: String = document?.get("imageUrl").toString()
                     val password: String = document["password"].toString()
                     val username: String = document?.get("username").toString()
+                    val isFollowing: Boolean = document["isFollowing"] as Boolean
 
-                    val userResult = User(document.id, fullName, username, email, password, bio, imageUrl)
+                    val userResult = User(document.id, fullName, username, email, password, bio, imageUrl, isFollowing)
                     Log.d("OYYY", "searchUser dalam object: ${userResult}")
                     listUser.add(userResult)
 
@@ -189,6 +178,50 @@ class SearchFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         _binding = null
+    }
+
+    override fun onButtonFollowClicked(position: Int, isFollowing: Boolean) {
+        Log.d(TAG, "onButtonFollowClicked: at Search Fragment $position isFollowing $isFollowing")
+        //Follow
+
+        if (isFollowing) {
+            //Following -> current User Follow user B
+            val following: MutableMap<String, Any> = HashMap()
+            following["following"] = searchAdapter.getData()[position].userId
+
+            val userIdToFollow = searchAdapter.getData()[position].userId
+
+            db!!.collection("follow").document(mAuth?.currentUser!!.uid).collection("following").document(userIdToFollow).set(
+                following
+            )
+
+            //Follower -> user B followed by current User
+            val follower: MutableMap<String, Any> = HashMap()
+            follower["follower"] = mAuth?.currentUser!!.uid
+
+            val currentUserThatFollow = mAuth?.currentUser!!.uid
+            db!!.collection("follow").document(searchAdapter.getData()[position].userId).collection("follower").document(currentUserThatFollow).set(
+                follower
+            )
+
+        } else {
+            //remove Following
+            removeFollowing(mAuth?.currentUser!!.uid, position)
+
+            //remove Follower
+            removeFollower(mAuth?.currentUser!!.uid, position)
+        }
+
+
+    }
+
+    private fun removeFollowing(currentUserId: String, position: Int) {
+        val userIdToFollow = searchAdapter.getData()[position].userId
+        db!!.collection("follow").document(currentUserId).collection("following").document(userIdToFollow).delete()
+    }
+
+    private fun removeFollower(currentUserId: String, position: Int) {
+        db!!.collection("follow").document(searchAdapter.getData()[position].userId).collection("follower").document(currentUserId).delete()
     }
 
 

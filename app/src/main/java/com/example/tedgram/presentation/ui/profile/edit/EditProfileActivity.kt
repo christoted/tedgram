@@ -171,6 +171,7 @@ class EditProfileActivity : AppCompatActivity() {
                     val fullName: String = result?.get("fullName").toString()
                     val imageUrl: String = result?.get("imageUrl").toString()
                     val username: String = result?.get("username").toString()
+//                    val isFollowing: Boolean = result?.get("isFollowing") as Boolean
 
                     binding?.etFullName?.setText(fullName)
                     binding?.etUsername?.setText(username)

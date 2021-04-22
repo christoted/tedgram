@@ -12,5 +12,6 @@ data class User (
     var email: String,
     var password: String,
     var bio: String,
-    var imageUrl: String
+    var imageUrl: String,
+    var IsFollowing: Boolean
 ) : Parcelable

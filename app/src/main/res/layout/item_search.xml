@@ -28,6 +28,7 @@
             android:layout_marginRight="8dp"
             android:text="Follow" />
 
+
         <TextView
             android:id="@+id/tvName"
             style="@style/TextSubTitleStyle"

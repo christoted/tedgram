@@ -33,7 +33,8 @@ class FirestoreRepository(private var mAuth: FirebaseAuth, private var db: Fireb
                         email,
                         password,
                         "",
-                        ""
+                        "",
+                        false
                     )
                 addToFirestore(userModel)
                 binding.progressBar.visibility = View.GONE
