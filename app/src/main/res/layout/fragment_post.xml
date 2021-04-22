@@ -1,14 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.ui.post.PostFragment">
+    tools:context=".presentation.ui.post.PostFragment"
+    android:background="@color/dark_salom">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.google.android.material.appbar.MaterialToolbar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_below="@id/appBarLayout"
+        android:background="@drawable/bg_login">
 
-</FrameLayout>
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+            android:contentDescription="Image Post"
+            android:background="@drawable/bg_post"
+            />
+
+        <View
+            android:id="@+id/iconAdd"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="118dp"
+            android:background="@drawable/ic_add"/>
+
+
+        <TextView
+            android:id="@+id/tvCaption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Caption"
+            android:layout_below="@id/imageView"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="10dp"
+            style="@style/TextTitleStyle"/>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_below="@id/tvCaption">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="Type Here"
+                android:background="@drawable/bg_caption"
+                style="@style/Theme.Design.Light"
+
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/buttonPost"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textLayout"
+            android:backgroundTint="@color/chalman_pink"
+            android:layout_marginTop="50dp"
+            android:text="Post"
+            android:textColor="@color/white"
+            style="@style/TextTitleStyle"
+            android:layout_centerInParent="true"
+            />
+
+    </RelativeLayout>
+
+
+
+
+</RelativeLayout>
