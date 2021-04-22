@@ -49,7 +49,7 @@
                             style="@style/TextTitleStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0" />
+                            android:text="-" />
 
                         <TextView
                             style="@style/TextSubTitleStyle"
@@ -69,10 +69,11 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/follower"
                             style="@style/TextTitleStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0" />
+                            android:text="-" />
 
                         <TextView
                             style="@style/TextSubTitleStyle"
@@ -92,10 +93,11 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/following"
                             style="@style/TextTitleStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0" />
+                            android:text="-" />
 
                         <TextView
                             style="@style/TextSubTitleStyle"
@@ -116,14 +118,14 @@
 
                     <Button
                         android:id="@+id/btnProfile"
+                        style="@style/Widget.MaterialComponents.Toolbar.Primary"
                         android:layout_width="220dp"
                         android:layout_height="35dp"
-                        android:text="Edit Profile"
                         android:background="@drawable/bg_button"
-                        style="@style/Widget.MaterialComponents.Toolbar.Primary"
-                        app:backgroundTint="@color/white"
+                        android:text="Edit Profile"
                         android:textColor="@color/dark_salom"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        app:backgroundTint="@color/white" />
 
                 </RelativeLayout>
 
@@ -150,8 +152,14 @@
                 app:tabTextColor="@android:color/white" />
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
-
     </com.google.android.material.appbar.AppBarLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_gravity="center" />
 
 
     <androidx.core.widget.NestedScrollView xmlns:tools="http://schemas.android.com/tools"

@@ -22,7 +22,6 @@ class SearchAdapter(
     private var isFollowing: Boolean = false
 
 
-
     private var mAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private var db: FirebaseFirestore = FirebaseFirestore.getInstance()
 

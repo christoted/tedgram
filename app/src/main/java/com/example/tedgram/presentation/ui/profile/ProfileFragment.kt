@@ -2,38 +2,25 @@ package com.example.tedgram.presentation.ui.profile
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.bumptech.glide.Glide
+import com.example.tedgram.R
 import com.example.tedgram.databinding.FragmentProfileNewBinding
 import com.example.tedgram.presentation.ui.profile.edit.EditProfileActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [ProfileFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ProfileFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    private var _binding: FragmentProfileNewBinding ?= null
+    private var _binding: FragmentProfileNewBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private var mAuth: FirebaseAuth? = null
+    private var db: FirebaseFirestore? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,9 +34,14 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if ( activity == null) {
+        if (activity == null) {
             return
         }
+
+        binding.progressBar.visibility = View.VISIBLE
+
+        mAuth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
 
         binding.scrollView.isFillViewport = true
 
@@ -62,27 +54,84 @@ class ProfileFragment : Fragment() {
             val intent = Intent(context, EditProfileActivity::class.java)
             startActivity(intent)
         }
+
+        fetchImage(mAuth?.currentUser!!.uid)
+        fetchFollowing(mAuth?.currentUser!!.uid)
+        fetchFollower(mAuth?.currentUser!!.uid)
+
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ProfileFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ProfileFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    private fun fetchImage(currentUserId: String) {
+        db?.collection("users")?.document(currentUserId)?.get()?.addOnCompleteListener { task ->
+
+            if (task.isSuccessful) {
+                val result = task.result
+                val imageURL: String = result?.get("imageUrl").toString()
+
+                Glide.with(this)
+                    .load(imageURL)
+                    .placeholder(R.drawable.ic_profile)
+                    .error(R.drawable.ic_profile)
+                    .into(binding.imageViewProfile)
+
+                binding.progressBar.visibility = View.GONE
+            }
+
+        }?.addOnFailureListener {
+            Log.d("FAILED", "onFailed $it ")
+        }
+    }
+
+    private fun fetchFollowing(currentUserId: String) {
+        db?.collection("follow")?.document(currentUserId)?.collection("following")?.get()
+            ?.addOnCompleteListener { task ->
+
+                if (task.isSuccessful) {
+                    val listFollowing = ArrayList<String>()
+                    for (document in task.result!!) {
+                        val userId: String = document["following"].toString()
+
+                        Log.d("USER ID", "fetchFollowing: $userId")
+                        listFollowing.add(userId)
+
+                    }
+
+                    binding.following.text = "${listFollowing.size}"
+
+                    binding.progressBar.visibility = View.GONE
                 }
+
+
+            }?.addOnFailureListener {
+                Log.d("FAILED", "onFailed: $it")
             }
     }
+
+    private fun fetchFollower(currentUserId: String) {
+        db?.collection("follow")?.document(currentUserId)?.collection("follower")?.get()
+            ?.addOnCompleteListener { task ->
+
+                if (task.isSuccessful) {
+                    val listFollower = ArrayList<String>()
+
+                    for (document in task.result!!) {
+                        val userId: String = document["follower"].toString()
+
+                        Log.d("USER ID", "fetch Follower: $userId")
+
+                        listFollower.add(userId)
+                    }
+
+                    binding.follower.text = "${listFollower.size}"
+                    binding.progressBar.visibility = View.GONE
+                }
+
+
+            }?.addOnFailureListener {
+                Log.d("FAILED", "onFailed: $it")
+            }
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()
