@@ -6,6 +6,7 @@
     tools:context=".presentation.ui.post.PostFragment"
     android:background="@color/dark_salom">
 
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
@@ -64,6 +65,7 @@
             android:layout_below="@id/tvCaption">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etCaption"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="Type Here"
@@ -89,7 +91,11 @@
 
     </RelativeLayout>
 
-
-
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_centerInParent="true"/>
 
 </RelativeLayout>
