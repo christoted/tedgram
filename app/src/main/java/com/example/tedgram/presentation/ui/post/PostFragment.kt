@@ -172,11 +172,11 @@ class PostFragment : Fragment() {
                 binding?.progressBar?.visibility = View.GONE
             }
 
+
+
+        }.addOnCompleteListener {
             binding?.progressBar?.visibility = View.GONE
             Toast.makeText(activity, "Success!", Toast.LENGTH_SHORT).show()
-
-        }.addOnFailureListener {
-
         }
 
 
@@ -226,14 +226,18 @@ class PostFragment : Fragment() {
         super.onResume()
 
         val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return
+
         val imageUriString = sharedPref.getString(URI_KEY, null)
-        val textCaption = sharedPref.getString(CAPTION_KEY, null)
 
+        if ( imageUriString != null ) {
+            val imageUri = Uri.parse(imageUriString)
+            if ( imageUri != null) {
+                binding?.imageView?.setImageURI(imageUri)
+            }
+        }
 
-        Log.d("URI", "onResume: $textCaption")
+        Log.d("urii", "onResume: $imageUriString")
 
-        val imageUri = Uri.parse(imageUriString)
-        binding?.imageView?.setImageURI(imageUri)
     }
 
 
