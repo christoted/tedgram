@@ -17,7 +17,9 @@ import androidx.fragment.app.FragmentActivity
 import com.bumptech.glide.Glide
 import com.example.tedgram.R
 import com.example.tedgram.databinding.ActivityEditProfileBinding
+import com.example.tedgram.presentation.ui.home.HomeFragment
 import com.example.tedgram.presentation.ui.login.LoginActivity
+import com.example.tedgram.presentation.ui.post.PostFragment
 import com.example.tedgram.util.Constant
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -35,10 +37,14 @@ class EditProfileActivity : AppCompatActivity() {
 
     companion object {
         val TAG: String? = EditProfileActivity::class.simpleName
+        var EDIT_IMAGE_KEY = "image_key"
+        var EDIT_USERNAME_KEY = "username_key"
     }
+
 
     private var imageUri: Uri? = null
     private var imagePath: String? = null
+
 
     private val cropActivityResultContract = object : ActivityResultContract<Any?, Uri?>() {
         override fun createIntent(context: Context, input: Any?): Intent {
@@ -120,10 +126,16 @@ class EditProfileActivity : AppCompatActivity() {
         }
     }
 
+    private fun checkDataUser() {
+
+    }
+
 
     private fun updateUserProfile(bio: String?, fullName: String?, username: String?, uri: Uri?) {
 
         val storageRef: StorageReference = storage?.reference!!.child(mAuth?.uid + Constant.PATH)
+
+        val sharedPref = this.getPreferences(Context.MODE_PRIVATE)
 
         if (uri != null) {
             storageRef.putFile(uri)
@@ -143,6 +155,12 @@ class EditProfileActivity : AppCompatActivity() {
                             )
                         )
                             .addOnSuccessListener {
+                                with(sharedPref?.edit()) {
+                                    this?.putString(HomeFragment.URI_KEY, imagePath)
+                                    this?.putString(HomeFragment.CAPTION_KEY, username)
+                                    this?.apply()
+
+                                }
                                 Log.d(TAG, "updateUserProfile: Success")
                             }.addOnFailureListener {
                                 Log.d(TAG, "updateUserProfile: Failed")
@@ -185,6 +203,7 @@ class EditProfileActivity : AppCompatActivity() {
 
                     binding?.progressBar?.visibility = View.GONE
 
+
                 } else {
                     Log.w(
                         TAG,
@@ -199,9 +218,9 @@ class EditProfileActivity : AppCompatActivity() {
                 binding?.progressBar?.visibility = View.GONE
             }
 
-            withContext(Dispatchers.Main) {
-               
-            }
+        withContext(Dispatchers.Main) {
+
+        }
     }
 
     private fun showAlertDialog() {

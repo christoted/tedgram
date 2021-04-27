@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".presentation.ui.home.HomeFragment">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -16,10 +16,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
+            app:menu="@menu/menu_home"
             app:title="TedGram"
-            app:titleTextColor="@color/dark_salom"
-            app:menu="@menu/menu_home">
-
+            app:titleTextColor="@color/dark_salom">
 
 
         </com.google.android.material.appbar.MaterialToolbar>
@@ -32,7 +31,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/appBarLayout"
-        tools:listitem="@layout/item_home"/>
+        tools:listitem="@layout/item_home" />
 
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
 
 </RelativeLayout>

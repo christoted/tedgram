@@ -2,63 +2,117 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="360dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="8dp">
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/imageView"
+    <LinearLayout
+        android:id="@+id/linearLayoutTop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profileImage"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@color/chalman_pink" />
+
+        <TextView
+            android:id="@+id/username"
+            style="@style/TextTitleStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="8dp"
+            android:text="Christoted"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+<!--    <com.google.android.material.imageview.ShapeableImageView-->
+<!--        android:id="@+id/imageView"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="250dp"-->
+<!--        android:layout_below="@id/linearLayoutTop"-->
+<!--        android:scaleType="centerCrop"-->
+<!--        android:adjustViewBounds="true"-->
+<!--        android:layout_marginTop="6dp"-->
+<!--        android:src="@drawable/bg_caption" />-->
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
         android:layout_width="match_parent"
         android:layout_height="250dp"
-        android:src="@drawable/bg_caption"/>
+        android:layout_below="@id/linearLayoutTop"
+        android:scaleType="centerCrop"
+        app:cardCornerRadius="8dp"
+        android:backgroundTint="@color/chalman_pink"
+        android:adjustViewBounds="true"
+        android:layout_marginTop="6dp"
+        android:src="@drawable/bg_caption" >
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/linearLayoutTop"
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+            android:layout_marginTop="6dp"
+            android:src="@drawable/bg_caption" />
+
+
+    </androidx.cardview.widget.CardView>
 
     <RelativeLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/imageView"
-        android:orientation="horizontal"
-        android:layout_marginTop="6dp">
+        android:layout_below="@id/cardView"
+        android:layout_marginTop="6dp"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/btnLike"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:background="@drawable/ic_baseline_favorite_border_24"/>
+            android:background="@drawable/ic_baseline_favorite_border_24" />
 
         <Button
             android:id="@+id/btnCommand"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:background="@drawable/ic_baseline_mode_comment_24"
+            android:layout_marginLeft="6dp"
             android:layout_toRightOf="@id/btnLike"
-            android:layout_marginLeft="6dp"/>
+            android:background="@drawable/ic_baseline_mode_comment_24" />
 
         <Button
             android:id="@+id/btnBookmarked"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:background="@drawable/ic_baseline_bookmark_border_24"
             android:layout_alignParentRight="true"
-            android:layout_marginLeft="6dp"/>
+            android:layout_marginLeft="6dp"
+            android:background="@drawable/ic_baseline_bookmark_border_24" />
     </RelativeLayout>
 
     <TextView
         android:id="@+id/tvCaption"
+        style="@style/TextSubTitleStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/linearLayout"
-        android:text="@string/large_text"
-        android:textSize="14sp"
         android:layout_marginTop="2dp"
-        style="@style/TextSubTitleStyle"/>
+        android:text="@string/large_text"
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/tvCommand"
+        style="@style/TextSubTitleStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvCaption"
-        android:text="0 Comments"
-        android:textSize="14sp"
         android:layout_marginTop="2dp"
-        style="@style/TextSubTitleStyle"/>
+        android:text="0 Comments"
+        android:textSize="14sp" />
 
 </RelativeLayout>

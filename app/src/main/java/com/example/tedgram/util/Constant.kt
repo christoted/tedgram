@@ -10,6 +10,7 @@ object Constant {
         const val STORAGE_PERMISSION = 1000
         const val CONTACT_PERMISSION = 2000
         const val POSTPATH = "/PostImage/image"
+        const val POSTALL = "/PostImageAll/image"
 
 
 }

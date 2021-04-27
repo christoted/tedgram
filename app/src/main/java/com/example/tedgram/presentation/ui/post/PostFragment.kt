@@ -17,6 +17,8 @@ import androidx.fragment.app.Fragment
 import com.example.tedgram.R
 import com.example.tedgram.core.data.local.entity.Post
 import com.example.tedgram.databinding.FragmentPostBinding
+import com.example.tedgram.presentation.ui.home.HomeFragment
+import com.example.tedgram.presentation.ui.profile.edit.EditProfileActivity
 import com.example.tedgram.util.Constant
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -27,6 +29,10 @@ import com.theartofdev.edmodo.cropper.CropImage
 
 class PostFragment : Fragment() {
 
+    /*
+        Retrive nya di Home Page aja nanti ketika masuk ke PostFragment tinggal lempar id nya
+     */
+
     private var _binding: FragmentPostBinding? = null
     private val binding get() = _binding
 
@@ -35,8 +41,8 @@ class PostFragment : Fragment() {
     private var imageUrii: Uri? = null
 
     companion object {
-        private val URI_KEY = "uri"
-        private val CAPTION_KEY = "caption"
+        val URI_KEY = "urii"
+        val CAPTION_KEY = "caption"
         private val PICK_IMAGE = 100
     }
 
@@ -71,6 +77,14 @@ class PostFragment : Fragment() {
         if (activity == null) {
             return
         }
+
+        val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
+
+        val imageUriString = sharedPref?.getString(HomeFragment.URI_KEY, " ")
+        val username = sharedPref?.getString(HomeFragment.CAPTION_KEY, " ")
+
+        Log.d("TEST", "onViewCreated ATTAS: $username && $imageUriString")
+
 
         mAuth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
@@ -116,28 +130,23 @@ class PostFragment : Fragment() {
                 binding?.etCaption?.error = "Please Add Caption"
             } else {
                 val caption = binding?.etCaption?.text.toString()
-                val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
-                with(sharedPref?.edit()) {
-                    this?.putString(CAPTION_KEY, caption)
-                    this?.apply()
 
-                }
+                Log.d("TEST", "onViewCreated: $username && $imageUriString")
 
-
-                val postModel = Post("", imageUrii.toString(), caption)
+                val postModel = Post("", imageUrii.toString(), caption, imageUriString.toString(), username!!)
 
                 if (imageUrii != null) {
                     addPost(postModel, imageUrii!!)
+                    addAllContent(postModel, imageUrii!!)
                 }
             }
         }
     }
 
-    private fun addPost(post: Post, imageUri: Uri) {
-
+    private fun addAllContent(post: Post, imageUri: Uri) {
         val userId = mAuth?.currentUser?.uid
 
-        val storageRef: StorageReference = storage?.reference!!.child(userId!! + Constant.POSTPATH)
+        val storageRef: StorageReference = storage?.reference!!.child(userId!! + Constant.POSTALL)
 
         storageRef.putFile(imageUri).addOnSuccessListener {
 
@@ -151,8 +160,10 @@ class PostFragment : Fragment() {
                 postMap["postId"] = post.postId.toString()
                 postMap["postURL"] = imagePath
                 postMap["postCaption"] = post.postCaption.toString()
+                postMap["username"] = post.username.toString()
+                postMap["userImageURL"] = post.userImageURL.toString()
 
-                db?.collection("content")?.document(userId)?.collection("post")?.add(
+                db?.collection("allcontent")?.add(
                     postMap
                 )?.addOnCompleteListener {
                     Toast.makeText(activity, "Posted!", Toast.LENGTH_SHORT).show()
@@ -173,10 +184,70 @@ class PostFragment : Fragment() {
             }
 
 
+        }.addOnCompleteListener {
+            binding?.progressBar?.visibility = View.GONE
+            Toast.makeText(activity, "Success!", Toast.LENGTH_SHORT).show()
+        }
+
+    }
+
+    private fun addPost(post: Post, imageUri: Uri) {
+
+        val userId = mAuth?.currentUser?.uid
+
+        val storageRef: StorageReference = storage?.reference!!.child(userId!! + Constant.POSTPATH)
+
+        storageRef.putFile(imageUri).addOnSuccessListener {
+
+            val downloadURL = it.storage.downloadUrl
+
+            downloadURL.addOnCompleteListener { task ->
+
+                val imagePath = task.result.toString()
+
+                val postMap: MutableMap<String, Any> = HashMap()
+                postMap["postId"] = post.postId.toString()
+                postMap["postURL"] = imagePath
+                postMap["postCaption"] = post.postCaption.toString()
+                postMap["username"] = post.username.toString()
+                postMap["userImageURL"] = post.userImageURL.toString()
+
+                db?.collection("content")?.document(userId)?.collection("post")?.add(
+                    postMap
+                )?.addOnCompleteListener {
+                    Toast.makeText(activity, "Posted!", Toast.LENGTH_SHORT).show()
+                    binding?.progressBar?.visibility = View.GONE
+                }?.addOnFailureListener {
+                    Toast.makeText(activity, "Some error occurred!", Toast.LENGTH_SHORT).show()
+                    binding?.progressBar?.visibility = View.GONE
+                }?.addOnSuccessListener {
+                    binding?.progressBar?.visibility = View.GONE
+                    binding?.imageView?.setImageURI(null)
+                    binding?.etCaption?.setText("")
+
+
+
+                    Toast.makeText(activity, "Success!", Toast.LENGTH_SHORT).show()
+                }
+
+            }.addOnFailureListener {
+                Log.d("TAG", "addPost: FAILED")
+                binding?.progressBar?.visibility = View.GONE
+            }
+
+
 
         }.addOnCompleteListener {
             binding?.progressBar?.visibility = View.GONE
             Toast.makeText(activity, "Success!", Toast.LENGTH_SHORT).show()
+
+
+            val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
+
+            with(sharedPref?.edit()) {
+                this?.remove(URI_KEY)
+                this?.apply()
+            }
         }
 
 
@@ -194,7 +265,6 @@ class PostFragment : Fragment() {
             with(sharedPref.edit()) {
                 putString(URI_KEY, imageUrii.toString())
                 apply()
-
             }
 
             Log.d("URI", "onActivityResult: ${imageUrii.toString()}")
