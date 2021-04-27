@@ -10,6 +10,7 @@ data class Post(
     var postURL: String ?= " ",
     var postCaption: String ?= " ",
     var userImageURL: String ?= " ",
-    var username: String ?= ""
+    var username: String ?= " ",
+    var userId: String ?= " "
 
 ): Parcelable

@@ -133,7 +133,7 @@ class PostFragment : Fragment() {
 
                 Log.d("TEST", "onViewCreated: $username && $imageUriString")
 
-                val postModel = Post("", imageUrii.toString(), caption, imageUriString.toString(), username!!)
+                val postModel = Post("", imageUrii.toString(), caption, imageUriString.toString(), username!!, mAuth?.currentUser?.uid)
 
                 if (imageUrii != null) {
                     addPost(postModel, imageUrii!!)
@@ -162,6 +162,7 @@ class PostFragment : Fragment() {
                 postMap["postCaption"] = post.postCaption.toString()
                 postMap["username"] = post.username.toString()
                 postMap["userImageURL"] = post.userImageURL.toString()
+                postMap["userId"] = post.userId.toString()
 
                 db?.collection("allcontent")?.add(
                     postMap
@@ -175,7 +176,7 @@ class PostFragment : Fragment() {
                     binding?.progressBar?.visibility = View.GONE
                     binding?.imageView?.setImageURI(null)
                     binding?.etCaption?.setText("")
-                    Toast.makeText(activity, "Success!", Toast.LENGTH_SHORT).show()
+
                 }
 
             }.addOnFailureListener {
@@ -186,7 +187,7 @@ class PostFragment : Fragment() {
 
         }.addOnCompleteListener {
             binding?.progressBar?.visibility = View.GONE
-            Toast.makeText(activity, "Success!", Toast.LENGTH_SHORT).show()
+
         }
 
     }
@@ -211,6 +212,7 @@ class PostFragment : Fragment() {
                 postMap["postCaption"] = post.postCaption.toString()
                 postMap["username"] = post.username.toString()
                 postMap["userImageURL"] = post.userImageURL.toString()
+                postMap["userId"] = post.userId.toString()
 
                 db?.collection("content")?.document(userId)?.collection("post")?.add(
                     postMap
@@ -226,8 +228,6 @@ class PostFragment : Fragment() {
                     binding?.etCaption?.setText("")
 
 
-
-                    Toast.makeText(activity, "Success!", Toast.LENGTH_SHORT).show()
                 }
 
             }.addOnFailureListener {
@@ -239,8 +239,6 @@ class PostFragment : Fragment() {
 
         }.addOnCompleteListener {
             binding?.progressBar?.visibility = View.GONE
-            Toast.makeText(activity, "Success!", Toast.LENGTH_SHORT).show()
-
 
             val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
 

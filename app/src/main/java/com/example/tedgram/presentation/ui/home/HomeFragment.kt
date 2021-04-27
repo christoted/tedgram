@@ -93,7 +93,7 @@ class HomeFragment : Fragment() {
             .setQuery(query, Post::class.java)
             .build()
 
-        postAdapter = PostAdapter(firestoreRecyclerOptions)
+        postAdapter = PostAdapter(firestoreRecyclerOptions, mAuth, db)
 
         binding?.recyclerViewHome?.layoutManager = LinearLayoutManager(activity)
         binding?.recyclerViewHome?.adapter = postAdapter
