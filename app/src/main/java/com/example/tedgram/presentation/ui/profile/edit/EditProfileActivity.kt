@@ -20,6 +20,7 @@ import com.example.tedgram.databinding.ActivityEditProfileBinding
 import com.example.tedgram.presentation.ui.home.HomeFragment
 import com.example.tedgram.presentation.ui.login.LoginActivity
 import com.example.tedgram.presentation.ui.post.PostFragment
+import com.example.tedgram.presentation.ui.profile.ProfileFragment
 import com.example.tedgram.util.Constant
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -118,6 +119,7 @@ class EditProfileActivity : AppCompatActivity() {
 
                     Snackbar.make(binding!!.root, "Update Success", Snackbar.LENGTH_SHORT).show()
                     Handler(Looper.getMainLooper()).postDelayed({
+                        startActivity(Intent(this, ProfileFragment::class.java))
                         finish()
                     }, 3000)
 

@@ -54,22 +54,25 @@ class PostAdapter(
         RecyclerView.ViewHolder(itemHomeBinding.root) {
 
         private fun fetchUser(currentId: String) {
-            db?.collection("users")?.document(currentId)?.get()?.addOnCompleteListener {
-                if (it.isSuccessful) {
-                    val result = it.result
+            db?.collection("users")?.document(currentId)?.addSnapshotListener { value, error ->
+
+                if ( value != null && value.exists()) {
+                    val result = value.data
+
                     val imageUrl = result?.get("imageUrl").toString()
                     val username = result?.get("username").toString()
 
                     Glide.with(itemView.context)
                         .load(imageUrl)
-                        .error(R.drawable.ic_profile)
+                        .error(R.color.chalman_pink)
                         .into(itemHomeBinding.profileImage)
 
-
                     itemHomeBinding.username.text = username
-
                 }
+
             }
+
+
         }
 
         fun bind(post: Post) {
