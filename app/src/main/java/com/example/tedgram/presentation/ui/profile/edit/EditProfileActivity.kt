@@ -82,7 +82,8 @@ class EditProfileActivity : AppCompatActivity() {
 
         binding?.progressBar?.visibility = View.VISIBLE
 
-        retrieveUserProfile()
+     //   retrieveUserProfile()
+        retrieveUserProfileRealTime()
 
         binding?.toolbar?.setNavigationOnClickListener {
             showAlertDialog()
@@ -218,9 +219,37 @@ class EditProfileActivity : AppCompatActivity() {
                 binding?.progressBar?.visibility = View.GONE
             }
 
-        withContext(Dispatchers.Main) {
 
-        }
+
+    }
+
+    private fun retrieveUserProfileRealTime() = GlobalScope.launch(Dispatchers.IO) {
+        db?.collection("users")
+            ?.document(mAuth?.currentUser!!.uid)
+            ?.addSnapshotListener { value, error ->
+                if ( value != null && value.exists()) {
+                    val result = value.data
+                    val email: String = result?.get("email").toString()
+                    val bio: String = result?.get("bio").toString()
+                    val fullName: String = result?.get("fullName").toString()
+                    val imageUrl: String = result?.get("imageUrl").toString()
+                    val username: String = result?.get("username").toString()
+
+                    binding?.etFullName?.setText(fullName)
+                    binding?.etUsername?.setText(username)
+                    binding?.etBio?.setText(bio)
+
+                    binding?.imageView?.let { imageHolder ->
+                        Glide.with(this@EditProfileActivity)
+                            .load(imageUrl)
+                            .into(imageHolder)
+                    }
+
+                    binding?.progressBar?.visibility = View.GONE
+                }
+            }
+
+
     }
 
     private fun showAlertDialog() {

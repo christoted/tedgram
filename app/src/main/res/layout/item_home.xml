@@ -61,6 +61,12 @@
             android:layout_marginTop="6dp"
             android:src="@drawable/bg_caption" />
 
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+           android:layout_gravity="center"/>
+
 
     </androidx.cardview.widget.CardView>
 
@@ -114,5 +120,7 @@
         android:layout_marginTop="2dp"
         android:text="0 Comments"
         android:textSize="14sp" />
+
+
 
 </RelativeLayout>

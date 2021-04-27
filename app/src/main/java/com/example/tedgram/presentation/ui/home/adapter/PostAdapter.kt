@@ -1,10 +1,16 @@
 package com.example.tedgram.presentation.ui.home.adapter
 
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.example.tedgram.R
 import com.example.tedgram.core.data.local.entity.Post
 import com.example.tedgram.databinding.ItemHomeBinding
@@ -75,16 +81,34 @@ class PostAdapter(
                 Glide.with(itemView.context)
                     .load(post.postURL)
                     .error(R.color.chalman_pink)
+                    .listener(object: RequestListener<Drawable>{
+                        override fun onLoadFailed(
+                            e: GlideException?,
+                            model: Any?,
+                            target: Target<Drawable>?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            progressBar.visibility = View.GONE
+
+                            return false
+                        }
+
+                        override fun onResourceReady(
+                            resource: Drawable?,
+                            model: Any?,
+                            target: Target<Drawable>?,
+                            dataSource: DataSource?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            progressBar.visibility = View.GONE
+
+                            return false
+                        }
+
+                    })
                     .into(imageView)
 
                 tvCaption.text = post.postCaption
-//                username.text = post.username
-
-
-//                Glide.with(itemView.context)
-//                    .load(post.userImageURL)
-//                    .error(R.drawable.ic_profile)
-//                    .into(profileImage)
 
                 btnLike.setOnClickListener {
                     Toast.makeText(itemView.context, "Like", Toast.LENGTH_SHORT).show()
