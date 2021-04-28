@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.example.tedgram.R
+import com.example.tedgram.core.data.local.entity.Post
 import com.example.tedgram.databinding.FragmentProfileNewBinding
 import com.example.tedgram.presentation.ui.profile.edit.EditProfileActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -21,6 +22,8 @@ class ProfileFragment : Fragment() {
 
     private var mAuth: FirebaseAuth? = null
     private var db: FirebaseFirestore? = null
+
+    private lateinit var listPost:ArrayList<Post>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,6 +40,10 @@ class ProfileFragment : Fragment() {
         if (activity == null) {
             return
         }
+
+        listPost = ArrayList()
+
+
 
         binding.progressBar.visibility = View.VISIBLE
 
@@ -58,8 +65,34 @@ class ProfileFragment : Fragment() {
         fetchImage(mAuth?.currentUser!!.uid)
         fetchFollowing(mAuth?.currentUser!!.uid)
         fetchFollower(mAuth?.currentUser!!.uid)
+        retrieveTotalPost(mAuth?.currentUser!!.uid)
 
     }
+
+    private fun retrieveTotalPost(userId: String) {
+        db?.collection("content")?.document(userId)?.collection("post")?.get()?.addOnCompleteListener {
+            if ( it.isSuccessful) {
+                val res = it.result
+                if (res != null) {
+                    for ( i in res) {
+                        val res = i.data
+                        val postCaption = res["postCaption"].toString()
+                        val postId = res["postId"].toString()
+                        val postURL = res["postURL"].toString()
+                        val userId = res["userId"].toString()
+                        val userImageURL = res["userImageURL"].toString()
+                        val username = res["username"].toString()
+
+                        val post = Post(postId, postURL, postCaption, userImageURL, username, userId)
+                        listPost.add(post)
+                    }
+                }
+
+                binding.tvPost.text = listPost.size.toString()
+            }
+        }
+    }
+
 
     private fun fetchImage(currentUserId: String) {
         db?.collection("users")?.document(currentUserId)?.get()?.addOnCompleteListener { task ->

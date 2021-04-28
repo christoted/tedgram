@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import com.bumptech.glide.Glide
 import com.example.tedgram.R
+import com.example.tedgram.core.data.local.entity.Post
 import com.example.tedgram.databinding.ActivityEditProfileBinding
 import com.example.tedgram.presentation.ui.home.HomeFragment
 import com.example.tedgram.presentation.ui.login.LoginActivity
@@ -69,11 +70,15 @@ class EditProfileActivity : AppCompatActivity() {
     private lateinit var cropActivityResultLauncher: ActivityResultLauncher<Any?>
 
 
+
+
     private var db: FirebaseFirestore? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityEditProfileBinding.inflate(layoutInflater)
         setContentView(binding?.root)
+
+
 
         db = FirebaseFirestore.getInstance()
 
@@ -85,6 +90,8 @@ class EditProfileActivity : AppCompatActivity() {
 
      //   retrieveUserProfile()
         retrieveUserProfileRealTime()
+
+
 
         binding?.toolbar?.setNavigationOnClickListener {
             showAlertDialog()
@@ -119,7 +126,6 @@ class EditProfileActivity : AppCompatActivity() {
 
                     Snackbar.make(binding!!.root, "Update Success", Snackbar.LENGTH_SHORT).show()
                     Handler(Looper.getMainLooper()).postDelayed({
-                        startActivity(Intent(this, ProfileFragment::class.java))
                         finish()
                     }, 3000)
 
@@ -129,9 +135,6 @@ class EditProfileActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkDataUser() {
-
-    }
 
 
     private fun updateUserProfile(bio: String?, fullName: String?, username: String?, uri: Uri?) {
