@@ -26,4 +26,12 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Coming Soon"
+        style="@style/TextSubTitleStyle"/>
+
+
 </RelativeLayout>

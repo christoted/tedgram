@@ -37,8 +37,6 @@ class HomeFragment : Fragment() {
 
     private lateinit var postAdapter: PostAdapter
 
-
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -48,9 +46,7 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
-
+        
         binding?.progressBar?.visibility = View.VISIBLE
 
         mAuth = FirebaseAuth.getInstance()
