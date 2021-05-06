@@ -1,6 +1,9 @@
 package com.example.tedgram.presentation.ui.home.adapter
 
 import android.graphics.drawable.Drawable
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +17,7 @@ import com.bumptech.glide.request.target.Target
 import com.example.tedgram.R
 import com.example.tedgram.core.data.local.entity.Post
 import com.example.tedgram.databinding.ItemHomeBinding
+import com.example.tedgram.presentation.ui.home.OnBookmarkClicked
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.auth.FirebaseAuth
@@ -23,20 +27,27 @@ import com.google.firebase.firestore.FirebaseFirestore
 class PostAdapter(
     options: FirestoreRecyclerOptions<Post>,
     private val mAuth: FirebaseAuth?,
-    private val db: FirebaseFirestore?
+    private val db: FirebaseFirestore?,
+    private val onBookmarkClicked: OnBookmarkClicked
 ) : FirestoreRecyclerAdapter<Post, PostAdapter.PostViewHolder>(
     options
 ) {
 
     val listPost = ArrayList<Post>()
 
+    var isBookmarked: Boolean = false
 
-    fun setPost(posts: ArrayList<Post>) {
+
+    fun setPost(posts: Post) {
         listPost.clear()
-        listPost.addAll(posts)
+        listPost.add(posts)
         notifyDataSetChanged()
     }
 
+    fun getPost(): List<Post> {
+
+        return listPost
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val itemHomeBinding =
@@ -46,7 +57,7 @@ class PostAdapter(
     }
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int, model: Post) {
-        holder.bind(model)
+        holder.bind(model, position)
     }
 
 
@@ -56,7 +67,7 @@ class PostAdapter(
         private fun fetchUser(currentId: String) {
             db?.collection("users")?.document(currentId)?.addSnapshotListener { value, error ->
 
-                if ( value != null && value.exists()) {
+                if (value != null && value.exists()) {
                     val result = value.data
 
                     val imageUrl = result?.get("imageUrl").toString()
@@ -71,61 +82,81 @@ class PostAdapter(
                 }
 
             }
+        }
 
+        fun bind(post: Post, bookmarkedPosition: Int) {
+
+
+            db?.collection("bookmark")?.document(mAuth?.currentUser!!.uid)?.collection("bookmarked")
+                ?.addSnapshotListener { value, error ->
+
+
+                    fetchUser(post.userId!!)
+
+                    with(itemHomeBinding) {
+
+                        Glide.with(itemView.context)
+                            .load(post.postURL)
+                            .error(R.color.chalman_pink)
+                            .listener(object : RequestListener<Drawable> {
+                                override fun onLoadFailed(
+                                    e: GlideException?,
+                                    model: Any?,
+                                    target: Target<Drawable>?,
+                                    isFirstResource: Boolean
+                                ): Boolean {
+                                    progressBar.visibility = View.GONE
+
+                                    return false
+                                }
+
+                                override fun onResourceReady(
+                                    resource: Drawable?,
+                                    model: Any?,
+                                    target: Target<Drawable>?,
+                                    dataSource: DataSource?,
+                                    isFirstResource: Boolean
+                                ): Boolean {
+                                    progressBar.visibility = View.GONE
+
+                                    return false
+                                }
+
+                            })
+                            .into(imageView)
+
+                        tvCaption.text = post.postCaption
+
+                        btnLike.setOnClickListener {
+                            Toast.makeText(itemView.context, "Like", Toast.LENGTH_SHORT).show()
+                        }
+
+                        btnCommand.setOnClickListener {
+                            Toast.makeText(itemView.context, "Command", Toast.LENGTH_SHORT).show()
+                        }
+
+                        btnBookmarked.setOnClickListener {
+                            isBookmarked = !isBookmarked
+                            setBookmarkedState(isBookmarked)
+                            onBookmarkClicked.onBookmarkedClicked(adapterPosition, isBookmarked)
+                        }
+
+
+
+                    }
+
+                }
 
         }
 
-        fun bind(post: Post) {
-
-            fetchUser(post.userId!!)
-
-            with(itemHomeBinding) {
-
-                Glide.with(itemView.context)
-                    .load(post.postURL)
-                    .error(R.color.chalman_pink)
-                    .listener(object: RequestListener<Drawable>{
-                        override fun onLoadFailed(
-                            e: GlideException?,
-                            model: Any?,
-                            target: Target<Drawable>?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            progressBar.visibility = View.GONE
-
-                            return false
-                        }
-
-                        override fun onResourceReady(
-                            resource: Drawable?,
-                            model: Any?,
-                            target: Target<Drawable>?,
-                            dataSource: DataSource?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            progressBar.visibility = View.GONE
-
-                            return false
-                        }
-
-                    })
-                    .into(imageView)
-
-                tvCaption.text = post.postCaption
-
-                btnLike.setOnClickListener {
-                    Toast.makeText(itemView.context, "Like", Toast.LENGTH_SHORT).show()
-                }
-
-                btnCommand.setOnClickListener {
-                    Toast.makeText(itemView.context, "Command", Toast.LENGTH_SHORT).show()
-                }
-
-                btnBookmarked.setOnClickListener {
-                    Toast.makeText(itemView.context, "Bookmarked", Toast.LENGTH_SHORT).show()
-                }
+        private fun setBookmarkedState(bookmarkedState: Boolean) {
+            if (bookmarkedState) {
+                itemHomeBinding.btnBookmarked.setBackgroundResource(R.drawable.ic_baseline_bookmark_24)
+            } else {
+                itemHomeBinding.btnBookmarked.setBackgroundResource(R.drawable.ic_baseline_bookmark_border_24)
             }
-
         }
     }
+
+
 }

@@ -100,12 +100,15 @@ class ProfileFragment : Fragment() {
             if (task.isSuccessful) {
                 val result = task.result
                 val imageURL: String = result?.get("imageUrl").toString()
+                val bio: String = result?.get("bio").toString()
 
                 Glide.with(this)
                     .load(imageURL)
                     .placeholder(R.drawable.ic_profile)
                     .error(R.drawable.ic_profile)
                     .into(binding.imageViewProfile)
+
+                binding.bio.text = bio
 
                 binding.progressBar.visibility = View.GONE
             }

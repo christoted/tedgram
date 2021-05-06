@@ -19,6 +19,7 @@
             app:toolbarId="@+id/toolbar">
 
             <RelativeLayout
+                android:id="@+id/rvTop"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center">
@@ -110,12 +111,23 @@
 
                 </RelativeLayout>
 
-                <RelativeLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/relativeLayoutDataUser"
                     android:layout_toRightOf="@id/imageViewProfile"
-                    android:gravity="center_horizontal">
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/bio"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Bio"
+                        android:layout_gravity="center_horizontal"
+                        android:textAlignment="center"
+                        android:textSize="14sp"
+                        style="@style/TextSubTitleStyle"/>
 
                     <Button
                         android:id="@+id/btnProfile"
@@ -128,7 +140,7 @@
                         android:textSize="12sp"
                         app:backgroundTint="@color/white" />
 
-                </RelativeLayout>
+                </LinearLayout>
 
             </RelativeLayout>
 
