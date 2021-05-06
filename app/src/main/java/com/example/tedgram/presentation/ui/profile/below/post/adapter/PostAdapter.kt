@@ -8,7 +8,9 @@ import com.example.tedgram.R
 import com.example.tedgram.core.data.local.entity.Post
 import com.example.tedgram.databinding.ItemPostSendiriBinding
 
-class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
+class PostAdapter(
+
+) : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
     private var listPost = ArrayList<Post>()
 

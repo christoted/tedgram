@@ -111,7 +111,7 @@ class SearchFragment : Fragment(), OnButtonFollowClicked {
         binding.progressBar.visibility = View.VISIBLE
         Log.d("OYY", "searchUser: result ATAS}")
         val listUser = ArrayList<User>()
-        db!!.collection("users").whereEqualTo("username", query).get().addOnCompleteListener {
+        db!!.collection("users").whereGreaterThanOrEqualTo("username", query).get().addOnCompleteListener {
 
 
             if ( it.isSuccessful) {
@@ -154,20 +154,28 @@ class SearchFragment : Fragment(), OnButtonFollowClicked {
         searchView.queryHint = "Search User"
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                Toast.makeText(activity, "Submit Boy", Toast.LENGTH_SHORT).show()
-                db!!.collection("users").whereArrayContains("username", "christoted").get().addOnCompleteListener {
-                    Log.d("OYY", "searchUser: ON create options dalam DB")
-                    for ( document in it.result!!) {
-                        Log.d("OYY", "searchUser dalam result: DUAR")
-                    }
-                }
-                searchUser(query ?: "teddy")
-                Log.d("OYY", "searchUser: ON create options menu")
-                return true
+//                Toast.makeText(activity, "Submit Boy", Toast.LENGTH_SHORT).show()
+//                if (query?.isEmpty() == true) {
+//                   getAllUser()
+//                } else {
+//                    searchUser(query ?: "teddy")
+//                }
+//
+//
+//                Log.d("OYY", "searchUser: ON create options menu")
+                return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                return false
+
+                if (newText?.isEmpty() == true) {
+                    getAllUser()
+                } else {
+                    searchUser(newText ?: "teddy")
+                }
+
+                return true
+
             }
 
         })
