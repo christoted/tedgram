@@ -3,6 +3,7 @@ package com.example.tedgram.presentation.ui.post
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -43,8 +44,11 @@ class PostFragment : Fragment() {
     companion object {
         val URI_KEY = "urii"
         val CAPTION_KEY = "caption"
+        val POST_ID_KEY = "postId"
         private val PICK_IMAGE = 100
+        val POST_ID_KEY_NEW = "postIdNew"
     }
+
 
     private var mAuth: FirebaseAuth? = null
     private var db: FirebaseFirestore? = null
@@ -85,7 +89,6 @@ class PostFragment : Fragment() {
 
         Log.d("TEST", "onViewCreated ATTAS: $username && $imageUriString")
 
-
         mAuth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
         storage = FirebaseStorage.getInstance()
@@ -124,6 +127,16 @@ class PostFragment : Fragment() {
 
         binding?.buttonPost?.setOnClickListener {
 
+            val postId = sharedPref?.getInt(POST_ID_KEY_NEW, -1)
+
+            with(sharedPref?.edit()) {
+                if (postId != null) {
+                    this?.putInt(POST_ID_KEY_NEW, postId+1)
+                    this?.apply()
+                }
+            }
+
+
             binding?.progressBar?.visibility = View.VISIBLE
 
             if (binding?.etCaption?.text.toString().isEmpty() || imageUrii.toString().isEmpty()) {
@@ -136,15 +149,19 @@ class PostFragment : Fragment() {
                 val postModel = Post("", imageUrii.toString(), caption, imageUriString.toString(), username!!, mAuth?.currentUser?.uid)
 
                 if (imageUrii != null) {
-                    addPost(postModel, imageUrii!!)
-                    addAllContent(postModel, imageUrii!!)
+                  //  addPost(postModel, imageUrii!!)
+                    if (postId != null) {
+                        addAllContent(postModel, imageUrii!!, postId)
+                    }
                 }
             }
         }
     }
 
-    private fun addAllContent(post: Post, imageUri: Uri) {
+    private fun addAllContent(post: Post, imageUri: Uri, postId: Int) {
+
         val userId = mAuth?.currentUser?.uid
+
 
         val storageRef: StorageReference = storage?.reference!!.child(userId!! + Constant.POSTALL)
 
@@ -164,7 +181,8 @@ class PostFragment : Fragment() {
                 postMap["userImageURL"] = post.userImageURL.toString()
                 postMap["userId"] = post.userId.toString()
 
-                db?.collection("allcontent")?.add(
+
+                db?.collection("allcontent")?.document(postId.toString())?.set(
                     postMap
                 )?.addOnCompleteListener {
                     Toast.makeText(activity, "Posted!", Toast.LENGTH_SHORT).show()
@@ -176,8 +194,24 @@ class PostFragment : Fragment() {
                     binding?.progressBar?.visibility = View.GONE
                     binding?.imageView?.setImageURI(null)
                     binding?.etCaption?.setText("")
-
                 }
+
+
+                db?.collection("content")?.document(userId)?.collection("post")?.document(postId.toString())?.set(
+                    postMap
+                )?.addOnCompleteListener {
+                    Toast.makeText(activity, "Posted!", Toast.LENGTH_SHORT).show()
+                    binding?.progressBar?.visibility = View.GONE
+                }?.addOnFailureListener {
+                    Toast.makeText(activity, "Some error occurred!", Toast.LENGTH_SHORT).show()
+                    binding?.progressBar?.visibility = View.GONE
+                }?.addOnSuccessListener {
+                    binding?.progressBar?.visibility = View.GONE
+                    binding?.imageView?.setImageURI(null)
+                    binding?.etCaption?.setText("")
+                }
+
+
 
             }.addOnFailureListener {
                 Log.d("TAG", "addPost: FAILED")
@@ -191,66 +225,6 @@ class PostFragment : Fragment() {
         }
 
     }
-
-    private fun addPost(post: Post, imageUri: Uri) {
-
-        val userId = mAuth?.currentUser?.uid
-
-        val storageRef: StorageReference = storage?.reference!!.child(userId!! + Constant.POSTPATH)
-
-        storageRef.putFile(imageUri).addOnSuccessListener {
-
-            val downloadURL = it.storage.downloadUrl
-
-            downloadURL.addOnCompleteListener { task ->
-
-                val imagePath = task.result.toString()
-
-                val postMap: MutableMap<String, Any> = HashMap()
-                postMap["postId"] = post.postId.toString()
-                postMap["postURL"] = imagePath
-                postMap["postCaption"] = post.postCaption.toString()
-                postMap["username"] = post.username.toString()
-                postMap["userImageURL"] = post.userImageURL.toString()
-                postMap["userId"] = post.userId.toString()
-
-                db?.collection("content")?.document(userId)?.collection("post")?.add(
-                    postMap
-                )?.addOnCompleteListener {
-                    Toast.makeText(activity, "Posted!", Toast.LENGTH_SHORT).show()
-                    binding?.progressBar?.visibility = View.GONE
-                }?.addOnFailureListener {
-                    Toast.makeText(activity, "Some error occurred!", Toast.LENGTH_SHORT).show()
-                    binding?.progressBar?.visibility = View.GONE
-                }?.addOnSuccessListener {
-                    binding?.progressBar?.visibility = View.GONE
-                    binding?.imageView?.setImageURI(null)
-                    binding?.etCaption?.setText("")
-
-
-                }
-
-            }.addOnFailureListener {
-                Log.d("TAG", "addPost: FAILED")
-                binding?.progressBar?.visibility = View.GONE
-            }
-
-
-
-        }.addOnCompleteListener {
-            binding?.progressBar?.visibility = View.GONE
-
-            val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
-
-            with(sharedPref?.edit()) {
-                this?.remove(URI_KEY)
-                this?.apply()
-            }
-        }
-
-
-    }
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

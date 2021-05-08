@@ -7,9 +7,10 @@ import com.bumptech.glide.Glide
 import com.example.tedgram.R
 import com.example.tedgram.core.data.local.entity.Post
 import com.example.tedgram.databinding.ItemPostSendiriBinding
+import com.example.tedgram.presentation.ui.profile.below.post.OnItemClicked
 
 class PostAdapter(
-
+    private val onItemClicked: OnItemClicked
 ) : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
     private var listPost = ArrayList<Post>()
@@ -33,7 +34,9 @@ class PostAdapter(
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = listPost[position]
-        return holder.bind(post)
+        holder.bind(post)
+        holder.onItemLongPressClicked()
+
     }
 
     override fun getItemCount(): Int {
@@ -44,7 +47,6 @@ class PostAdapter(
     inner class PostViewHolder(private val itemPostSendiriBinding: ItemPostSendiriBinding) :
         RecyclerView.ViewHolder(itemPostSendiriBinding.root) {
         fun bind(post: Post) {
-
             with(itemPostSendiriBinding) {
                 Glide.with(itemView.context)
                     .load(post.postURL)
@@ -52,5 +54,14 @@ class PostAdapter(
                     .into(imageViewPost)
             }
         }
+
+        fun onItemLongPressClicked(){
+            itemPostSendiriBinding.root.setOnLongClickListener {
+                onItemClicked.onItemClicked(adapterPosition, itemPostSendiriBinding)
+                true
+            }
+        }
+
+
     }
 }

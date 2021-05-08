@@ -75,34 +75,6 @@ class SavedFragment : Fragment(), OnItemClicked {
         binding.rvPost.layoutManager = GridLayoutManager(context, 3)
     }
 
-    private fun getAllBookmarked() {
-        db?.collection("bookmark")?.document(mAuth?.currentUser!!.uid)?.collection("bookmarked")?.get()?.addOnCompleteListener {
-            if ( it.isSuccessful) {
-                val res = it.result
-                Log.d("TEST", "getAllBookmarked: $res")
-                if (res != null) {
-                    for ( i in res) {
-
-                        val data = i.data
-                        val postCaption = data["postCaption"] as String
-                        val postId = data["postId"] as String
-                        val postURL = data["postURL"] as String
-                        val userId = data["userId"] as String
-                        val userImageURL = data["userImageURL"] as String
-                        val username = data["username"] as String
-
-                        val post = Post(postId, postURL, postCaption, userImageURL, username, userId)
-
-                        listPost.add(post)
-                        adapter.setPost(listPost)
-                        binding.rvPost.adapter = adapter
-                    }
-                }
-
-                binding.progressBar.visibility = View.GONE
-            }
-        }
-    }
 
     private fun getAllBookmarkedRealTime(){
       //  val query: Query = db!!.collection("allcontent")

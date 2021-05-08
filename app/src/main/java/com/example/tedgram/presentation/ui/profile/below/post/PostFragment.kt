@@ -6,25 +6,33 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.tedgram.R
 import com.example.tedgram.core.data.local.entity.Post
 import com.example.tedgram.databinding.FragmentPost2Binding
+import com.example.tedgram.databinding.ItemPostSendiriBinding
 import com.example.tedgram.presentation.ui.profile.below.post.adapter.PostAdapter
+import com.example.tedgram.presentation.ui.profile.below.post.adapter.PostRealTimeAdapter
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 
-class PostFragment : Fragment() {
+class PostFragment : Fragment(), OnItemClicked {
 
-    private var _binding: FragmentPost2Binding ?= null
+    private var _binding: FragmentPost2Binding? = null
     val binding get() = _binding
 
-    private var mAuth: FirebaseAuth ?= null
-    private var db: FirebaseFirestore ?= null
-    private var postAdapter: PostAdapter ?= null
+    private var mAuth: FirebaseAuth? = null
+    private var db: FirebaseFirestore? = null
+    private var postAdapter: PostAdapter? = null
 
     private lateinit var listPost: ArrayList<Post>
+
+    private lateinit var firestoreRecyclerOptions: FirestoreRecyclerOptions<Post>
+    private lateinit var postRealTimeAdapter: PostRealTimeAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,83 +51,84 @@ class PostFragment : Fragment() {
 
         listPost = ArrayList()
 
-        postAdapter = PostAdapter()
+        postAdapter = PostAdapter(this)
 
         binding?.progressBar?.visibility = View.VISIBLE
 
-        fetchPost(mAuth?.currentUser!!.uid)
+        //fetchPost(mAuth?.currentUser!!.uid)
+
+        getAllPostRealTime(mAuth?.currentUser!!.uid)
     }
 
-    private fun fetchPost(currentId: String){
-        db?.collection("content")?.document(currentId)?.collection("post")?.addSnapshotListener { value, error ->
-            if (value != null ) {
-                val results = value.documents
+    private fun getAllPostRealTime(currentId: String) {
+        val query: Query = db!!.collection("content").document(currentId).collection("post")
+        firestoreRecyclerOptions = FirestoreRecyclerOptions.Builder<Post>()
+            .setQuery(query, Post::class.java)
+            .build()
 
-                for ( result in results) {
-                    val res = result.data
-                    val postCaption = res?.get("postCaption").toString()
-                    val postId = res?.get("postId").toString()
-                    val postURL = res?.get("postURL").toString()
-                    val userId = res?.get("userId").toString()
-                    val userImageURL = res?.get("userImageURL").toString()
-                    val username = res?.get("username").toString()
+        binding?.progressBar?.visibility = View.GONE
 
-                    val post = Post(postId, postURL, postCaption, userImageURL, username, userId)
-                    listPost.add(post)
+        postRealTimeAdapter = PostRealTimeAdapter(firestoreRecyclerOptions, db!!, mAuth!!, this)
 
-
-                    Log.d("SIZEE", "fetchPost: ${listPost.size}")
-
-                    postAdapter?.setData(listPost)
-
-                    binding?.rvPost?.layoutManager = GridLayoutManager(context, 3)
-                    binding?.rvPost?.adapter = postAdapter
-                }
-
-                binding?.progressBar?.visibility = View.GONE
-            }
-
-        }
-//
-//        {
-//            if ( it.isSuccessful) {
-//                val results = it.result
-//                if (results != null) {
-//                    for ( i in results) {
-//
-//                        val res = i.data
-//                        val postCaption = res["postCaption"].toString()
-//                        val postId = res["postId"].toString()
-//                        val postURL = res["postURL"].toString()
-//                        val userId = res["userId"].toString()
-//                        val userImageURL = res["userImageURL"].toString()
-//                        val username = res["username"].toString()
-//
-//                        val post = Post(postId, postURL, postCaption, userImageURL, username, userId)
-//                        listPost.add(post)
-//
-//
-//                        Log.d("SIZEE", "fetchPost: ${listPost.size}")
-//
-//                        postAdapter?.setData(listPost)
-//
-//                        binding?.rvPost?.layoutManager = GridLayoutManager(context, 3)
-//                        binding?.rvPost?.adapter = postAdapter
-//                    }
-//                }
-//
-//                binding?.progressBar?.visibility = View.GONE
-//            } //      }
+        binding?.rvPost?.layoutManager = GridLayoutManager(context, 3)
+        binding?.rvPost?.adapter = postRealTimeAdapter
     }
 
 
-
-
-
-
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDetach() {
+        super.onDetach()
         _binding = null
+        postRealTimeAdapter.stopListening()
+    }
+
+    override fun onItemClicked(position: Int, itemPostSendiriBinding: ItemPostSendiriBinding) {
+        val popUpMenu = PopupMenu(activity, itemPostSendiriBinding.root)
+        popUpMenu.inflate(R.menu.menu_delete)
+        popUpMenu.show()
+
+        popUpMenu.setOnMenuItemClickListener {
+            it
+            when (it.itemId) {
+                R.id.delete -> {
+                    deletePost(position)
+                }
+            }
+            true
+        }
+    }
+
+    private fun deletePost(position: Int) {
+
+        val listDocumentIdPostUser: ArrayList<String> = ArrayList()
+
+        db?.collection("content")?.document(mAuth?.currentUser!!.uid)?.collection("post")?.get()
+            ?.addOnCompleteListener {
+                if (it.isSuccessful) {
+                    val res = it.result
+
+                    val idToDelete: String?
+
+                    if (res != null) {
+                        for (i in res) {
+                            listDocumentIdPostUser.add(i.id)
+                        }
+                        idToDelete = listDocumentIdPostUser[position]
+
+                        db?.collection("content")?.document(mAuth?.currentUser!!.uid)
+                            ?.collection("post")?.document(listDocumentIdPostUser[position])
+                            ?.delete()
+
+                        db?.collection("allcontent")?.document(idToDelete)?.delete()
+                    }
+
+                }
+            }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        postRealTimeAdapter.startListening()
     }
 
 }
