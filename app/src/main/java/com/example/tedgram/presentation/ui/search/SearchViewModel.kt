@@ -1,5 +1,7 @@
 package com.example.tedgram.presentation.ui.search
 
-class SearchViewModel {
+import com.example.tedgram.core.data.FirestoreRepository
+
+class SearchViewModel(firestoreRepository: FirestoreRepository) {
 
 }

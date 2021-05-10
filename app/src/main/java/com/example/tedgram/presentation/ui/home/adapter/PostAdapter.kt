@@ -90,7 +90,6 @@ class PostAdapter(
             db?.collection("bookmark")?.document(mAuth?.currentUser!!.uid)?.collection("bookmarked")
                 ?.addSnapshotListener { value, error ->
 
-
                     fetchUser(post.userId!!)
 
                     with(itemHomeBinding) {

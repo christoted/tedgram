@@ -1,4 +1,6 @@
 package com.example.tedgram.presentation.ui.notification
 
-class NotificationViewModel {
+import com.example.tedgram.core.data.FirestoreRepository
+
+class NotificationViewModel(firestoreRepository: FirestoreRepository) {
 }

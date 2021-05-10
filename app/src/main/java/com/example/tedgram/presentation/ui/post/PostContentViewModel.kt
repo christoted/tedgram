@@ -1,5 +1,7 @@
 package com.example.tedgram.presentation.ui.post
 
-class PostContentViewModel {
+import com.example.tedgram.core.data.FirestoreRepository
+
+class PostContentViewModel(firestoreRepository: FirestoreRepository) {
 
 }

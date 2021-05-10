@@ -1,4 +1,6 @@
 package com.example.tedgram.presentation.ui.profile.below.saved
 
-class SavedViewModel {
+import com.example.tedgram.core.data.FirestoreRepository
+
+class SavedViewModel(firestoreRepository: FirestoreRepository){
 }

@@ -100,6 +100,13 @@ class EditProfileActivity : AppCompatActivity() {
         binding?.btnLogout?.setOnClickListener {
             mAuth?.signOut()
             startActivity(Intent(this, LoginActivity::class.java))
+
+            val sharedPref = getPreferences(Context.MODE_PRIVATE)
+            with(sharedPref.edit()) {
+                remove(PostFragment.URI_KEY)
+                apply()
+            }
+
             finish()
         }
 

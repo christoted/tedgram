@@ -1,20 +1,11 @@
 package com.example.tedgram.presentation.ui.profile.below.saved.adapter
 
-import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.example.tedgram.R
 import com.example.tedgram.core.data.local.entity.Post
-import com.example.tedgram.core.data.remote.response.BookmarkedResponse
-import com.example.tedgram.databinding.ItemHomeBinding
 import com.example.tedgram.databinding.ItemPostSendiriBinding
 import com.example.tedgram.presentation.ui.profile.below.saved.OnItemClicked
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter

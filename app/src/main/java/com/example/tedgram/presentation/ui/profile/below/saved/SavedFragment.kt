@@ -4,23 +4,18 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.PopupMenu
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.tedgram.R
 import com.example.tedgram.core.data.local.entity.Post
-import com.example.tedgram.core.data.remote.response.BookmarkedResponse
 import com.example.tedgram.databinding.FragmentSavedBinding
 import com.example.tedgram.databinding.ItemPostSendiriBinding
-import com.example.tedgram.presentation.ui.home.adapter.PostAdapter
 import com.example.tedgram.presentation.ui.profile.below.saved.adapter.SavedAdapter
 import com.example.tedgram.presentation.ui.profile.below.saved.adapter.SavedRealTimeAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import org.json.JSONObject
 
 
 class SavedFragment : Fragment(), OnItemClicked {

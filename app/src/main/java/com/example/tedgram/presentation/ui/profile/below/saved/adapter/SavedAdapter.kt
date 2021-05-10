@@ -1,16 +1,11 @@
 package com.example.tedgram.presentation.ui.profile.below.saved.adapter
 
-import android.view.ContextMenu
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.tedgram.R
 import com.example.tedgram.core.data.local.entity.Post
-import com.example.tedgram.core.data.remote.response.BookmarkedResponse
-import com.example.tedgram.databinding.FragmentSavedBinding
 import com.example.tedgram.databinding.ItemPostSendiriBinding
 import com.example.tedgram.presentation.ui.profile.below.saved.OnItemClicked
 

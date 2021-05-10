@@ -1,4 +1,7 @@
 package com.example.tedgram.presentation.ui.home
 
-class HomeViewModel {
+import com.example.tedgram.core.data.FirestoreRepository
+
+class HomeViewModel(firestoreRepository: FirestoreRepository) {
+
 }

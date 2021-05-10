@@ -1,4 +1,7 @@
 package com.example.tedgram.presentation.ui.login
 
-class LoginViewModel {
+import com.example.tedgram.core.data.FirestoreRepository
+
+class LoginViewModel(firestoreRepository: FirestoreRepository) {
+
 }
