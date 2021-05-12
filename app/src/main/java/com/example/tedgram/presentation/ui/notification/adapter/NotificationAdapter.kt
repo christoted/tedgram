@@ -12,7 +12,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 
-class NotificationAdapter(private val db: FirebaseFirestore, private val onButtonClicked: OnButtonClicked): RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder>()  {
+class NotificationAdapter(
+    private val mAuth: FirebaseAuth,
+    private val db: FirebaseFirestore,
+    private val onButtonClicked: OnButtonClicked
+) : RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder>() {
 
     var ids: ArrayList<String> = ArrayList()
 
@@ -25,24 +29,50 @@ class NotificationAdapter(private val db: FirebaseFirestore, private val onButto
     }
 
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotificationViewHolder {
-        val itemNotificationBinding = ItemNotificationBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val itemNotificationBinding =
+            ItemNotificationBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
         return NotificationViewHolder(itemNotificationBinding)
     }
 
     override fun onBindViewHolder(holder: NotificationViewHolder, position: Int) {
         val data = ids[position]
+        holder.setState(data)
         holder.retrieveByUserId(data)
+
     }
 
     override fun getItemCount(): Int = ids.size
 
 
-    inner class NotificationViewHolder(private val itemNotificationBinding: ItemNotificationBinding): RecyclerView.ViewHolder(itemNotificationBinding.root) {
+    inner class NotificationViewHolder(private val itemNotificationBinding: ItemNotificationBinding) :
+        RecyclerView.ViewHolder(itemNotificationBinding.root) {
+        val listFollowingId: ArrayList<String> = ArrayList()
+        fun setState(userId: String) {
+            db.collection("follow").document(mAuth.currentUser.uid).collection("following").get()
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        val result = it.result
 
-        fun retrieveByUserId(userId: String){
+                        if (result != null) {
+                            for (i in result) {
+                                listFollowingId.add(i.id)
+                            }
+                        }
+                    }
+
+                    listFollowingId.forEach { id ->
+                        if (id == userId) {
+                            setFollowState(!isFollowing)
+                        }
+                    }
+
+
+                }
+        }
+
+        fun retrieveByUserId(userId: String) {
             db.collection("users").document(userId).get().addOnCompleteListener {
                 if (it.isSuccessful) {
                     val data = it.result
@@ -76,7 +106,5 @@ class NotificationAdapter(private val db: FirebaseFirestore, private val onButto
 
 
     }
-
-
 
 }

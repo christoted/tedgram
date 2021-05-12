@@ -19,12 +19,12 @@ import com.google.firebase.storage.FirebaseStorage
 
 class NotificationFragment : Fragment(), OnButtonClicked {
 
-    private var binding: FragmentNotificationBinding ?= null
+    private var binding: FragmentNotificationBinding? = null
     val _binding get() = binding
 
     private lateinit var notificationViewModel: NotificationViewModel
 
-    private lateinit var mAuth:FirebaseAuth
+    private lateinit var mAuth: FirebaseAuth
 
     private lateinit var db: FirebaseFirestore
 
@@ -53,23 +53,25 @@ class NotificationFragment : Fragment(), OnButtonClicked {
         db = FirebaseFirestore.getInstance()
 
         val viewModelFactory = ViewModelFactory.getInstance(activity!!)
-        notificationViewModel = ViewModelProvider(this, viewModelFactory)[NotificationViewModel::class.java]
+        notificationViewModel =
+            ViewModelProvider(this, viewModelFactory)[NotificationViewModel::class.java]
 
         notificationViewModel.followUpdateLiveData
 
-        notificationAdapter = NotificationAdapter(db, this)
+        notificationAdapter = NotificationAdapter(mAuth, db, this)
 
         setupRV()
 
-        notificationViewModel.getAllUpdate(mAuth.currentUser.uid).observe(viewLifecycleOwner, Observer {
-            listUserId.addAll(it)
-            notificationAdapter.setListId(it)
+        notificationViewModel.getAllUpdate(mAuth.currentUser.uid)
+            .observe(viewLifecycleOwner, Observer {
+                listUserId.addAll(it)
+                notificationAdapter.setListId(it)
 
-            binding?.rvNotification?.adapter = notificationAdapter
-        })
+                binding?.rvNotification?.adapter = notificationAdapter
+            })
     }
 
-    private fun setupRV(){
+    private fun setupRV() {
         binding?.rvNotification?.layoutManager = LinearLayoutManager(activity)
     }
 
@@ -86,18 +88,20 @@ class NotificationFragment : Fragment(), OnButtonClicked {
 
             val userIdToFollow = notificationAdapter.ids[position]
 
-            db.collection("follow").document(mAuth.currentUser!!.uid).collection("following").document(userIdToFollow).set(
-                following
-            )
+            db.collection("follow").document(mAuth.currentUser!!.uid).collection("following")
+                .document(userIdToFollow).set(
+                    following
+                )
 
             //Follower -> user B followed by current User
             val follower: MutableMap<String, Any> = HashMap()
             follower["follower"] = mAuth.currentUser!!.uid
 
             val currentUserThatFollow = mAuth.currentUser!!.uid
-            db.collection("follow").document(notificationAdapter.ids[position]).collection("follower").document(currentUserThatFollow).set(
-                follower
-            )
+            db.collection("follow").document(notificationAdapter.ids[position])
+                .collection("follower").document(currentUserThatFollow).set(
+                    follower
+                )
         } else {
             removeFollowing(mAuth.currentUser!!.uid, position)
             removeFollower(mAuth.currentUser!!.uid, position)
@@ -106,11 +110,13 @@ class NotificationFragment : Fragment(), OnButtonClicked {
 
     private fun removeFollowing(currentUserId: String, position: Int) {
         val userIdToFollow = notificationAdapter.ids[position]
-        db.collection("follow").document(currentUserId).collection("following").document(userIdToFollow).delete()
+        db.collection("follow").document(currentUserId).collection("following")
+            .document(userIdToFollow).delete()
     }
 
     private fun removeFollower(currentUserId: String, position: Int) {
-        db.collection("follow").document(notificationAdapter.ids[position]).collection("follower").document(currentUserId).delete()
+        db.collection("follow").document(notificationAdapter.ids[position]).collection("follower")
+            .document(currentUserId).delete()
     }
 
 }

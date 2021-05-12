@@ -4,6 +4,7 @@ import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -14,6 +15,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.tedgram.R
 import com.example.tedgram.core.data.local.entity.Post
@@ -26,6 +29,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.theartofdev.edmodo.cropper.CropImage
+import java.lang.Error
+import java.util.jar.Manifest
 
 
 class PostFragment : Fragment() {
@@ -48,6 +53,8 @@ class PostFragment : Fragment() {
         private val PICK_IMAGE = 100
         val POST_ID_KEY_NEW = "postIdNew"
     }
+
+
 
 
     private var mAuth: FirebaseAuth? = null
@@ -264,6 +271,8 @@ class PostFragment : Fragment() {
         }
     }
 
+
+
     override fun onResume() {
         super.onResume()
 
@@ -271,12 +280,18 @@ class PostFragment : Fragment() {
 
         val imageUriString = sharedPref.getString(URI_KEY, null)
 
-        if ( imageUriString != null ) {
-            val imageUri = Uri.parse(imageUriString)
-            if ( imageUri != null) {
-                binding?.imageView?.setImageURI(imageUri)
-            }
-        }
+//        if ( imageUriString != null ) {
+//            val imageUri = Uri.parse(imageUriString)
+//            if ( imageUri != null) {
+//
+//                try {
+//                    binding?.imageView?.setImageURI(imageUri)
+//                } catch (e: Error) {
+//                    binding?.imageView?.setImageResource(0)
+//                }
+//            }
+//        }
+
 
         Log.d("urii", "onResume: $imageUriString")
 

@@ -12,16 +12,18 @@
             android:id="@+id/imageView"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:src="@color/chalman_pink"/>
+            android:src="@color/chalman_pink"
+            android:layout_marginStart="5dp" />
 
         <TextView
             android:id="@+id/username"
-            android:layout_width="200dp"
+            android:layout_width="190dp"
             android:layout_height="wrap_content"
-            android:text="Username started following you, Do you know?"
-            android:layout_marginLeft="15dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
             android:layout_toRightOf="@id/imageView"
-            android:layout_centerVertical="true"/>
+            android:layout_centerHorizontal="true"
+            android:text="Username started following you, Do you know?" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonFollow"
@@ -29,7 +31,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="8dp"
             android:text="Follow" />
 
 
