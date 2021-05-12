@@ -203,6 +203,11 @@ class FirestoreRepository(
         }
     }
 
+    //Notification
+    override fun getAllUpdate(currentId: String): CollectionReference {
+        return db.collection("follow").document(currentId).collection("follower")
+    }
+
     override fun getProfileUser(currentId: String): CollectionReference {
 
         return db?.collection("users")

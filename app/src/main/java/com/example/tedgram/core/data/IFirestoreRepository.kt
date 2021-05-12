@@ -35,6 +35,7 @@ interface IFirestoreRepository {
     fun postContent(post: Post, imageUri: Uri, postId: Int, binding: FragmentPostBinding)
 
     /* Notification */
+    fun getAllUpdate(currentId: String): CollectionReference
 
     /* Profile */
     fun getProfileUser(currentId: String) : CollectionReference

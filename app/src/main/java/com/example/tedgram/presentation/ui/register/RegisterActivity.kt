@@ -130,4 +130,7 @@ class RegisterActivity : AppCompatActivity() {
 
         _binding = null
     }
+
+
 }
+
